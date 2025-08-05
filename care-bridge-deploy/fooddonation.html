@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Donation - Care Bridge</title>
+    <!-- Supabase CDN -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            margin: 20px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ddd;
+            z-index: 1;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 10px;
+            cursor: default;
+            position: relative;
+            z-index: 2;
+            border: 3px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+            transform: scale(1.1);
+        }
+
+        .step.completed {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .form-step {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            border-color: #4CAF50;
+            background: #f8f9fa;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .summary-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .summary-value {
+            color: #333;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            background: rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+        <h1><i class="fas fa-utensils"></i> Food Donation</h1>
+        <p>Share meals and groceries with those in need</p>
+    </header>
+
+    <div class="container">
+        <div class="stepper">
+            <div class="step active" data-step="1">
+                <i class="fas fa-utensils"></i>
+                <div>Food Details</div>
+            </div>
+            <div class="step" data-step="2">
+                <i class="fas fa-user"></i>
+                <div>Contact Info</div>
+            </div>
+            <div class="step" data-step="3">
+                <i class="fas fa-check"></i>
+                <div>Confirm</div>
+            </div>
+        </div>
+
+        <form id="donationForm">
+            <!-- Step 1: Food Details -->
+            <div class="form-step active" data-step="1">
+                <h2><i class="fas fa-utensils"></i> Food Details</h2>
+                
+                <div class="form-group">
+                    <label for="foodQuantity"><i class="fas fa-sort-numeric-up"></i> Quantity</label>
+                    <input type="number" id="foodQuantity" name="foodQuantity" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-tags"></i> Food Type</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="vegetarian" name="foodType" value="Vegetarian">
+                            <label for="vegetarian">Vegetarian</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="non-vegetarian" name="foodType" value="Non-Vegetarian">
+                            <label for="non-vegetarian">Non-Vegetarian</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="vegan" name="foodType" value="Vegan">
+                            <label for="vegan">Vegan</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="gluten-free" name="foodType" value="Gluten-Free">
+                            <label for="gluten-free">Gluten-Free</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="foodItems"><i class="fas fa-list"></i> Items to Donate</label>
+                    <textarea id="foodItems" name="foodItems" placeholder="Please describe the food items you want to donate (e.g., Canned Soup - 10 cans, Rice - 5 lbs, Fresh Vegetables - 2 kg)..." required></textarea>
+                </div>
+
+                <button type="button" class="btn next-btn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Step 2: Contact Information -->
+            <div class="form-step" data-step="2">
+                <h2><i class="fas fa-user"></i> Contact Information</h2>
+                
+                <div class="form-group">
+                    <label for="name"><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone"><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+
+                <button type="button" class="btn btn-secondary prev-btn">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button type="button" class="btn next-btn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Step 3: Confirmation -->
+            <div class="form-step" data-step="3">
+                <h2><i class="fas fa-check"></i> Confirm Your Donation</h2>
+                
+                <div class="summary-card">
+                    <h3><i class="fas fa-clipboard-list"></i> Donation Summary</h3>
+                    <div class="summary-item">
+                        <span class="summary-label">Quantity:</span>
+                        <span class="summary-value" id="summaryQuantity"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Food Type:</span>
+                        <span class="summary-value" id="summaryType"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Items:</span>
+                        <span class="summary-value" id="summaryItems"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Name:</span>
+                        <span class="summary-value" id="summaryName"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Email:</span>
+                        <span class="summary-value" id="summaryEmail"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Phone:</span>
+                        <span class="summary-value" id="summaryPhone"></span>
+                    </div>
+                </div>
+
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Thank you for your donation!</h3>
+                    <p>We will contact you soon to arrange pickup or delivery.</p>
+                </div>
+
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h3>Error</h3>
+                    <p id="errorText"></p>
+                </div>
+
+                <button type="button" class="btn btn-secondary prev-btn">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button type="submit" class="btn" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> Submit Donation
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <footer>
+        <p>© 2024 Care Bridge. All rights reserved.</p>
+    </footer>
+
+    <script src="supabase-config.js"></script>
+    <script src="fin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('donationForm');
+            const steps = document.querySelectorAll('.form-step');
+            const stepIndicators = document.querySelectorAll('.step');
+            const nextButtons = document.querySelectorAll('.next-btn');
+            const prevButtons = document.querySelectorAll('.prev-btn');
+            const submitBtn = document.getElementById('submitBtn');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            let currentStep = 1;
+
+            // Handle Next Button Clicks
+            nextButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (validateStep(currentStep)) {
+                        currentStep++;
+                        updateForm();
+                    }
+                });
+            });
+
+            // Handle Previous Button Clicks
+            prevButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    currentStep--;
+                    updateForm();
+                });
+            });
+
+            // Handle Form Submission
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // Show loading state
+                submitBtn.innerHTML = '<div class="loading"></div> Processing...';
+                submitBtn.disabled = true;
+                
+                try {
+                    // Collect form data
+                    const selectedFoodTypes = Array.from(document.querySelectorAll('input[name="foodType"]:checked'))
+                        .map(checkbox => checkbox.value)
+                        .join(', ');
+                    
+                    const donationData = {
+                        fullName: document.getElementById('name').value,
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value,
+                        foodType: selectedFoodTypes,
+                        quantity: parseInt(document.getElementById('foodQuantity').value),
+                        description: document.getElementById('foodItems').value
+                    };
+
+                    // Save to Supabase
+                    const result = await saveFoodDonation(donationData);
+                    
+                    if (result.success) {
+                        // Show success message
+                        successMessage.style.display = 'block';
+                        errorMessage.style.display = 'none';
+                        
+                        // Reset form after 3 seconds
+                        setTimeout(() => {
+                            form.reset();
+                            currentStep = 1;
+                            updateForm();
+                            successMessage.style.display = 'none';
+                        }, 3000);
+                    } else {
+                        throw new Error(result.error);
+                    }
+                } catch (error) {
+                    // Show error message
+                    document.getElementById('errorText').textContent = error.message || 'An error occurred. Please try again.';
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+                } finally {
+                    // Reset button
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Donation';
+                    submitBtn.disabled = false;
+                }
+            });
+
+            // Update Form Display
+            function updateForm() {
+                steps.forEach(step => {
+                    step.classList.remove('active');
+                    if (parseInt(step.getAttribute('data-step')) === currentStep) {
+                        step.classList.add('active');
+                    }
+                });
+
+                stepIndicators.forEach((indicator, index) => {
+                    indicator.classList.remove('active', 'completed');
+                    if (index + 1 < currentStep) {
+                        indicator.classList.add('completed');
+                    } else if (index + 1 === currentStep) {
+                        indicator.classList.add('active');
+                    }
+                });
+
+                if (currentStep === 3) {
+                    updateSummary();
+                }
+            }
+
+            // Validate Current Step
+            function validateStep(step) {
+                const currentStepElement = steps[step - 1];
+                const inputs = currentStepElement.querySelectorAll('input, select, textarea');
+                
+                for (let input of inputs) {
+                    if (input.hasAttribute('required') && !input.value.trim()) {
+                        alert(`Please fill out ${input.name} before proceeding.`);
+                        input.focus();
+                        return false;
+                    }
+                }
+                
+                // Special validation for food type checkboxes
+                if (step === 1) {
+                    const checkedFoodTypes = document.querySelectorAll('input[name="foodType"]:checked');
+                    if (checkedFoodTypes.length === 0) {
+                        alert('Please select at least one food type.');
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+
+            // Update Confirmation Summary
+            function updateSummary() {
+                document.getElementById('summaryQuantity').textContent = document.getElementById('foodQuantity').value;
+                
+                const selectedFoodTypes = Array.from(document.querySelectorAll('input[name="foodType"]:checked'))
+                    .map(checkbox => checkbox.value)
+                    .join(', ');
+                document.getElementById('summaryType').textContent = selectedFoodTypes || 'None selected';
+                
+                document.getElementById('summaryItems').textContent = document.getElementById('foodItems').value;
+                document.getElementById('summaryName').textContent = document.getElementById('name').value;
+                document.getElementById('summaryEmail').textContent = document.getElementById('email').value;
+                document.getElementById('summaryPhone').textContent = document.getElementById('phone').value;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .qr-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 400px;
+            color: #333;
+        }
+        .qr-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 8px;
+            margin: 10px auto;
+            display: block;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code Image Test</h1>
+    
+    <div class="qr-container">
+        <h2>PhonePe QR Code</h2>
+        <p>Testing QR code image loading...</p>
+        <img src="Qrcode.jpg" alt="PhonePe QR Code" class="qr-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <p style="display:none; color: red; font-weight: bold;">❌ QR Code image failed to load!</p>
+        <p>If you see the QR code above, the image is working correctly!</p>
+        <p><strong>Siddikoushik</strong></p>
+    </div>
+    
+    <p><a href="index.html" style="color: white;">← Back to Homepage</a></p>
+</body>
+</html> 

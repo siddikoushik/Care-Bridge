@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Care Bridge - Share & Care</title>
+    <link rel="stylesheet" href="fin.css">
+    <link rel="icon" type="image/png" href="https://img.freepik.com/premium-photo/world-food-day-celebrating-global-food-sustainability_1164885-8095.jpg">
+    <!-- Supabase CDN -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-heart"></i>
+            <h1>Share & Care</h1>
+        </div>
+        <h1 class="care">Welcome to Care Bridge</h1>
+        <div class="nav-container">
+            <button class="cross-btn" aria-label="Toggle Navigation">
+                <i class="fas fa-user"></i>
+            </button>
+            <div class="menu" id="menu">
+                <div class="auth-buttons" id="auth-buttons">
+                    <button class="auth-btn" onclick="openAuthModal('login')">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                    <button class="auth-btn" onclick="openAuthModal('register')">
+                        <i class="fas fa-user-plus"></i> Register
+                    </button>
+                </div>
+                <div class="user-info" id="user-info" style="display: none;">
+                    <div class="user-details">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="user-name">User</span>
+                    </div>
+                    <button class="auth-btn logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+                <div class="nav">
+                    <button class="btn_h" onclick="location.href='#Home'">
+                        <i class="fas fa-home"></i> Home
+                    </button>
+                    <button class="btn_h" onclick="location.href='#about'">
+                        <i class="fas fa-info-circle"></i> About
+                    </button>
+                    <button class="btn_h" onclick="location.href='#contact'">
+                        <i class="fas fa-envelope"></i> Contact Us
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-sign-in-alt"></i> Login</h3>
+                <span class="close" onclick="closeAuthModal('login')">×</span>
+            </div>
+            <form onsubmit="handleAuth(event, 'login')">
+                <div class="form-group">
+                    <label for="login-email"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <div class="auth-footer">
+                    Don't have an account?
+                    <a href="#" onclick="switchAuthModal('login', 'register')">Register here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Create Account</h3>
+                <span class="close" onclick="closeAuthModal('register')">×</span>
+            </div>
+            <form onsubmit="handleAuth(event, 'register')">
+                <div class="form-group">
+                    <label for="register-name"><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="register-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="register-password" required>
+                    <small style="color: #666; font-size: 12px; margin-top: 5px; display: block;">
+                        Password must be at least 8 characters with uppercase, lowercase, numbers, and symbols.
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm"><i class="fas fa-lock"></i> Confirm Password</label>
+                    <input type="password" id="register-confirm" required>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+                <div class="auth-footer">
+                    Already have an account?
+                    <a href="#" onclick="switchAuthModal('register', 'login')">Login here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <section class="hero" id="Home">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h2><i class="fas fa-heart"></i> Make a Difference Today</h2>
+                <p>Join our mission to redistribute resources and create a more equitable society. Your donations can help bridge the gap and improve lives.</p>
+                <div class="hero-buttons">
+                    <a href="#donate" class="btn primary-btn">
+                        <i class="fas fa-gift"></i> Start Donating
+                    </a>
+                    <a href="receiving.html" class="btn secondary-btn">
+                        <i class="fas fa-hands-helping"></i> Begin Receiving
+                    </a>
+                </div>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <i class="fas fa-users"></i>
+                    <h3>1000+</h3>
+                    <p>People Helped</p>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <h3>500+</h3>
+                    <p>Donations Made</p>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-globe"></i>
+                    <h3>25+</h3>
+                    <p>Cities Covered</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-us" id="about">
+        <div class="container">
+            <h2><i class="fas fa-info-circle"></i> About Us</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Care Bridge is a platform dedicated to connecting donors with those in need. We believe in the power of community and the impact of small acts of kindness.</p>
+                    <div class="mission-vision">
+                        <div class="mission">
+                            <h3><i class="fas fa-bullseye"></i> Our Mission</h3>
+                            <p>To create a world where no one goes hungry or without basic necessities.</p>
+                        </div>
+                        <div class="vision">
+                            <h3><i class="fas fa-eye"></i> Our Vision</h3>
+                            <p>A sustainable community where resources are shared equitably.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="donation-section" id="donate">
+        <div class="container">
+            <h2><i class="fas fa-gift"></i> Choose Your Donation Type</h2>
+            <div class="donation-grid">
+                <div class="donation-card">
+                    <div class="card-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3>Food Donation</h3>
+                    <p>Share meals and groceries with those in need</p>
+                    <a href="fooddonation.html" class="btn">Donate Food</a>
+                </div>
+                
+                <div class="donation-card">
+                    <div class="card-icon">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <h3>Clothing Donation</h3>
+                    <p>Provide warm clothes and essentials</p>
+                    <a href="clothsdonation.html" class="btn">Donate Clothes</a>
+                </div>
+                
+                <div class="donation-card">
+                    <div class="card-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Education Support</h3>
+                    <p>Help students with educational resources</p>
+                    <a href="educationdonation.html" class="btn">Support Education</a>
+                </div>
+                
+                <div class="donation-card">
+                    <div class="card-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h3>Monetary Donation</h3>
+                    <p>Make a financial contribution</p>
+                    <a href="moneydonation.html" class="btn">Donate Money</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <h2><i class="fas fa-envelope"></i> Contact Us</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                                            <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <h3>Address</h3>
+                                <p>Mangalpally, Ibrahimpatnam, Hyderabad, 501510</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <h3>Phone</h3>
+                                <p>+91 6303537875</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h3>Email</h3>
+                                <p>siddikoushik321@gmail.com</p>
+                            </div>
+                        </div>
+                </div>
+                <div class="contact-form">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="contact-name">Name</label>
+                            <input type="text" id="contact-name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email">Email</label>
+                            <input type="email" id="contact-email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-message">Message</label>
+                            <textarea id="contact-message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn" id="contactSubmitBtn">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                    <div id="contactSuccess" class="success-message" style="display: none;">
+                        <i class="fas fa-check-circle"></i> Message sent successfully!
+                    </div>
+                    <div id="contactError" class="error-message" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i> <span id="contactErrorText">Failed to send message. Please try again.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-heart"></i> Care Bridge</h3>
+                    <p>Connecting hearts, bridging communities, making a difference.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#Home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#donate">Donate</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Care Bridge. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- EmailJS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="fin.js"></script>
+    <script>
+        // Initialize EmailJS
+        (function() {
+            emailjs.init("DL9dOuxJ_pq5vddgE");
+        })();
+
+        // Contact form functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const contactForm = document.getElementById('contactForm');
+            const contactSubmitBtn = document.getElementById('contactSubmitBtn');
+            const contactSuccess = document.getElementById('contactSuccess');
+            const contactError = document.getElementById('contactError');
+            const contactErrorText = document.getElementById('contactErrorText');
+
+            contactForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Show loading state
+                const originalText = contactSubmitBtn.innerHTML;
+                contactSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                contactSubmitBtn.disabled = true;
+                
+                // Hide previous messages
+                contactSuccess.style.display = 'none';
+                contactError.style.display = 'none';
+
+                try {
+                    // Get form data
+                    const formData = {
+                        name: document.getElementById('contact-name').value,
+                        email: document.getElementById('contact-email').value,
+                        message: document.getElementById('contact-message').value
+                    };
+
+                                    // Send email using EmailJS with your new template
+                const templateParams = {
+                    to_name: 'Siddi',
+                    from_name: formData.name,
+                    from_email: formData.email,
+                    message: formData.message,
+                    reply_to: formData.email
+                };
+                
+                await emailjs.send('service_jiyy8cq', 'template_474c67v', templateParams);
+                    
+                    // Show success message
+                    contactSuccess.style.display = 'block';
+                    contactForm.reset();
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        contactSuccess.style.display = 'none';
+                    }, 5000);
+                    
+                } catch (error) {
+                    console.error('Form submission error:', error);
+                    // Show error message
+                    contactErrorText.textContent = 'Failed to send message. Please try again.';
+                    contactError.style.display = 'block';
+                } finally {
+                    // Reset button
+                    contactSubmitBtn.innerHTML = originalText;
+                    contactSubmitBtn.disabled = false;
+                }
+            });
+            
+            // Add test button for match detection
+            const testButton = document.createElement('button');
+            testButton.innerHTML = '🧪 Test Match Detection';
+            testButton.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 10px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;';
+            testButton.onclick = testMatchDetection;
+            document.body.appendChild(testButton);
+        });
+    </script>
+</body>
+</html>

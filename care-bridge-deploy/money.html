@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share & Care - Request Donations</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <style>
+                /* Existing styles remain unchanged */
+                * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        :root {
+            --primary: #2C3E50;
+            --secondary: #3498DB;
+            --accent: #E74C3C;
+            --light: #ECF0F1;
+        }
+        body {
+            background-color: var(--light);
+            line-height: 1.6;
+        }
+        .navbar {
+            background-color: var(--primary);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar h1 {
+            color: white;
+        }
+        .nav-container {
+            position: relative;
+        }
+        .cross-btn {
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+            transition: transform 0.3s;
+        }
+        .cross-btn:hover {
+            transform: scale(1.2);
+        }
+        .menu {
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--primary);
+            border: 1px solid white;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1001;
+        }
+        .menu.active {
+            display: flex;
+        }
+        .auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .auth-btn {
+            padding: 0.5rem 1.5rem;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        .auth-btn:hover {
+            background: white;
+            color: var(--primary);
+        }
+        .btn_h {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            color: white;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        .btn_h:hover {
+            background-color: var(--secondary);
+        }
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            color: white;
+        }
+        .profile-icon {
+            font-size: 1.2rem;
+        }
+        .hero {
+            height: 60vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(https://img.freepik.com/premium-photo/world-food-day-celebrating-global-food-sustainability_1164885-8095.jpg);
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding: 2rem;
+        }
+        .hero-content {
+            max-width: 800px;
+        }
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+        }
+        .request-section {
+            padding: 4rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .request-section h2 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: var(--secondary);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+        }
+        .btn:hover {
+            background-color: var(--accent);
+        }
+        .requests-list {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .requests-list h2 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .request-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .request-card p {
+            margin: 0.5rem 0;
+        }
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        .footer-content p {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        .social-links a:hover {
+            color: var(--accent);
+        }
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 10vh;
+            gap: 20px;
+        }
+        .btn1 {
+            display: inline-block;
+            padding: 12px 24px;
+            text-decoration: none;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 110px;
+            height: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            animation: buttonPulse 2s infinite;
+        }
+        .btn1:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .btn1:active {
+            background-color: #2e6a30;
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+        @keyframes buttonPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>Share & Care</h1>
+        <div class="nav-container">
+            <button class="cross-btn" aria-label="Toggle Navigation">×</button>
+            <div class="menu" id="menu">
+                <div class="auth-buttons" id="authButtons">
+                    <button class="auth-btn">Login</button>
+                    <button class="auth-btn">Register</button>
+                </div>
+                <div class="nav">
+                    <button class="btn_h" onclick="location.href='index.html'">Home</button>
+                    <button class="btn_h">About</button>
+                    <button class="btn_h">Contact Us</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Welcome to Care Bridge</h2>
+            <p>Let us know what you need, and we’ll connect you with donors who can help.</p>
+        </div>
+    </section>
+
+    <div class="center">
+        <button class="btn1" onclick="location.href='#food'">Food</button>
+        <button class="btn1" onclick="location.href='#cloths'">Clothes</button>
+        <button class="btn1" onclick="location.href='#education'">Education</button>
+    </div>
+
+    <!-- Food Request Section -->
+    <section class="request-section" id="food">
+        <h2>Submit Your Food Request</h2>
+        <form id="foodRequestForm" action="submit_food.php" method="POST">
+            <div class="form-group">
+                <label for="food-name">Your Name:</label>
+                <input type="text" id="food-name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="food-email">Your Email:</label>
+                <input type="email" id="food-email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="food-type">Type of Food Needed:</label>
+                <select id="food-type" name="type" required>
+                    <option value="" disabled selected>Select food type</option>
+                    <option value="Non-Perishable">Non-Perishable</option>
+                    <option value="Fresh Produce">Fresh Produce</option>
+                    <option value="Prepared Meals">Prepared Meals</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div> 
+            <div class="form-group">
+                <label for="food-details">Additional Details:</label>
+                <textarea id="food-details" name="details" rows="4"></textarea>
+            </div>
+            <button type="submit" class="btn">Submit Request</button>
+        </form>
+    </section>
+
+    <!-- Clothes Request Section -->
+    <section class="request-section" id="cloths">
+        <h2>Submit Your Clothes Request</h2>
+        <form id="clothsRequestForm" action="submit_clothes.php" method="POST">
+            <div class="form-group">
+                <label for="cloths-name">Your Name:</label>
+                <input type="text" id="cloths-name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="cloths-email">Your Email:</label>
+                <input type="email" id="cloths-email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="cloths-type">Type of Clothes Needed:</label>
+                <select id="cloths-type" name="type" required>
+                    <option value="" disabled selected>Select cloth type</option>
+                    <option value="Winter Wear">Winter Wear</option>
+                    <option value="Casual Wear">Casual Wear</option>
+                    <option value="Formal Wear">Formal Wear</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div> 
+            <div class="form-group">
+                <label for="cloths-details">Additional Details:</label>
+                <textarea id="cloths-details" name="details" rows="4"></textarea>
+            </div>
+            <button type="submit" class="btn">Submit Request</button>
+        </form>
+    </section>
+
+    <!-- Education Request Section -->
+    <section class="request-section" id="education">
+        <h2>Submit Your Education Request</h2>
+        <form id="educationRequestForm" action="submit_education.php" method="POST">
+            <div class="form-group">
+                <label for="education-name">Your Name:</label>
+                <input type="text" id="education-name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="education-email">Your Email:</label>
+                <input type="email" id="education-email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="education-type">Type of Educational Materials:</label>
+                <select id="education-type" name="type" required>
+                    <option value="" disabled selected>Select material type</option>
+                    <option value="Books">Books</option>
+                    <option value="Stationery">Stationery</option>
+                    <option value="Digital Devices">Digital Devices</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div> 
+            <div class="form-group">
+                <label for="edu-materials">Additional Details:</label>
+                <textarea id="edu-materials" name="details" rows="4"></textarea>
+            </div>
+            <button type="submit" class="btn">Submit Request</button>
+        </form>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <p>Share & Care - Making a Difference, One Donation at a Time</p>
+            <div class="social-links">
+                <a href="#" class="fab fa-facebook"></a>
+                <a href="#" class="fab fa-twitter"></a>
+                <a href="#" class="fab fa-instagram"></a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

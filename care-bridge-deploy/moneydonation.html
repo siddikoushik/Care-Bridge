@@ -1,0 +1,250 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate to Us</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            text-align: center;
+            /* Updated colorful background */
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1, #96c93d);
+            background-size: 200% 200%; /* For animation effect */
+            animation: gradientShift 10s ease infinite, fadeIn 1s ease-in;
+        }
+
+        /* Animated gradient shift */
+        @keyframes gradientShift {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+
+        /* Fade-in animation for the page */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.8s ease-out;
+        }
+
+        h2 {
+            color: #e74c3c;
+            margin-top: 30px;
+            font-size: 1.8em;
+            transition: color 0.3s ease;
+        }
+
+        h2:hover {
+            color: #c0392b;
+        }
+
+        /* Slide-in animation for headings */
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        p {
+            color: #34495e;
+            font-size: 1.1em;
+        }
+
+        .donation-options, .additional-options {
+            margin: 20px 0;
+        }
+
+        .donation-option {
+            margin: 15px 0;
+        }
+
+        button {
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 200px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Specific button colors */
+        #paypal { background-color: #003087; }
+        #paypal:hover { background-color: #00205b; }
+
+        #phonepe { background-color: #5f259f; }
+        #phonepe:hover { background-color: #451b75; }
+
+        #googlepay { background-color: #4285f4; }
+        #googlepay:hover { background-color: #3267d6; }
+
+        #qrScanner { background-color: #e91e63; }
+        #qrScanner:hover { background-color: #c2185b; }
+
+        #directNumber { background-color: #ff9800; }
+        #directNumber:hover { background-color: #e68900; }
+
+        #atmCard { background-color: #673ab7; }
+        #atmCard:hover { background-color: #512da8; }
+
+        /* Animation for buttons on load */
+        .donation-option button {
+            animation: bounceIn 0.5s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            60% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        .back-link {
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+            color: #27ae60;
+            font-weight: bold;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #219653;
+            transform: scale(1.1);
+        }
+
+        .qr-code, .phone-number, .card-form {
+            margin: 10px 0;
+            padding: 15px;
+            background: linear-gradient(45deg, #ecf0f1, #ffffff);
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            display: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.3s ease;
+        }
+
+        .qr-code.show, .phone-number.show, .card-form.show {
+            display: block;
+            opacity: 1;
+            animation: popUp 0.5s ease-out;
+        }
+
+        @keyframes popUp {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .card-form input {
+            display: block;
+            width: 80%;
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            transition: border-color 0.3s ease;
+        }
+
+        .card-form input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        .card-form button {
+            background-color: #2ecc71;
+            margin-top: 10px;
+        }
+
+        .card-form button:hover {
+            background-color: #27ae60;
+        }
+
+
+    </style>
+</head>
+<body>
+    <h1>Support Our Care-Bridge</h1>
+    <p>Your donation helps us provide nutritional food ,cloths donation and for good education and resources to those in need. Choose a payment method below:</p>
+
+    <!-- Existing Donation Options -->
+    <div class="donation-options">
+        <div class="donation-option">
+            <button id="paypal" onclick="alert('Redirecting to PayPal... (Integration placeholder)')">Donate with PayPal</button>
+        </div>
+        <div class="donation-option">
+            <button id="phonepe" onclick="alert('Redirecting to PhonePe... (Integration placeholder)')">Donate with PhonePe</button>
+        </div>
+        <div class="donation-option">
+            <button id="googlepay" onclick="alert('Redirecting to Google Pay... (Integration placeholder)')">Donate with Google Pay</button>
+        </div>
+    </div>
+
+    <!-- Additional Donation Methods -->
+    <h2>More Ways to Donate</h2>
+    <div class="additional-options">
+
+
+        <!-- Direct Phone Number -->
+        <div class="donation-option">
+            <button id="directNumber" onclick="toggleSection('phoneNumberSection')">Donate via Phone Number</button>
+            <div id="phoneNumberSection" class="phone-number">
+                <p>Send your donation to this number via your payment app:</p>
+                                        <p><strong>+91 6303537875</strong></p>
+                <p>(Placeholder number - Replace with your UPI or payment number)</p>
+            </div>
+        </div>
+
+        <!-- ATM Card Donation -->
+        <div class="donation-option">
+            <button id="atmCard" onclick="toggleSection('cardFormSection')">Donate with ATM Card</button>
+            <div id="cardFormSection" class="card-form">
+                <p>Enter your card details:</p>
+                <input type="text" placeholder="Card Number" maxlength="16">
+                <input type="text" placeholder="Expiry Date (MM/YY)" maxlength="5">
+                <input type="text" placeholder="CVV" maxlength="3">
+                <input type="text" placeholder="Amount ($)">
+                <button onclick="alert('Processing ATM card payment... (Integration placeholder)')">Submit Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <a href="index.html" class="back-link">Back to Home</a>
+
+    <script>
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section.style.display === 'block') {
+                section.style.display = 'none';
+                section.classList.remove('show');
+            } else {
+                document.querySelectorAll('.qr-code, .phone-number, .card-form').forEach(el => {
+                    el.style.display = 'none';
+                    el.classList.remove('show');
+                });
+                section.style.display = 'block';
+                section.classList.add('show');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education Donation - Care Bridge</title>
+    <!-- Supabase CDN -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            margin: 20px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ddd;
+            z-index: 1;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 10px;
+            cursor: default;
+            position: relative;
+            z-index: 2;
+            border: 3px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+            transform: scale(1.1);
+        }
+
+        .step.completed {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .form-step {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .summary-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .summary-value {
+            color: #333;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+            
+            .stepper {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .step {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+        <h1><i class="fas fa-graduation-cap"></i> Education Donation</h1>
+        <p>Share knowledge and empower minds through education</p>
+    </header>
+
+    <div class="container">
+        <div class="stepper">
+            <div class="step active">
+                <div>1</div>
+                <div>Book Details</div>
+            </div>
+            <div class="step">
+                <div>2</div>
+                <div>Contact Info</div>
+            </div>
+            <div class="step">
+                <div>3</div>
+                <div>Confirm</div>
+            </div>
+        </div>
+
+        <form id="donationForm">
+            <!-- Step 1: Book Details -->
+            <div class="form-step active" data-step="1">
+                <h2><i class="fas fa-book"></i> Book Details</h2>
+                
+                <div class="form-group">
+                    <label for="bookQuantity"><i class="fas fa-sort-numeric-up"></i> Quantity</label>
+                    <input type="number" id="bookQuantity" name="bookQuantity" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="bookType"><i class="fas fa-tags"></i> Book Type</label>
+                    <select id="bookType" name="bookType" required>
+                        <option value="">Select book type</option>
+                        <option value="Fiction">Fiction</option>
+                        <option value="Non-Fiction">Non-Fiction</option>
+                        <option value="Educational">Educational</option>
+                        <option value="Children">Children's</option>
+                        <option value="Reference">Reference</option>
+                        <option value="Biography">Biography</option>
+                        <option value="Story Books">Story Books</option>
+                        <option value="Historical">Historical</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="bookDescription"><i class="fas fa-list"></i> Description of Books</label>
+                    <textarea id="bookDescription" name="bookDescription" placeholder="Please describe the books you want to donate..." required></textarea>
+                </div>
+
+                <button type="button" class="btn next-btn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Step 2: Contact Information -->
+            <div class="form-step" data-step="2">
+                <h2><i class="fas fa-user"></i> Contact Information</h2>
+                
+                <div class="form-group">
+                    <label for="name"><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone"><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+
+                <button type="button" class="btn btn-secondary prev-btn">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button type="button" class="btn next-btn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Step 3: Confirmation -->
+            <div class="form-step" data-step="3">
+                <h2><i class="fas fa-check"></i> Confirm Your Donation</h2>
+                
+                <div class="summary-card">
+                    <h3><i class="fas fa-clipboard-list"></i> Donation Summary</h3>
+                    <div class="summary-item">
+                        <span class="summary-label">Quantity:</span>
+                        <span class="summary-value" id="summaryQuantity"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Book Type:</span>
+                        <span class="summary-value" id="summaryType"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Description:</span>
+                        <span class="summary-value" id="summaryDescription"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Name:</span>
+                        <span class="summary-value" id="summaryName"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Email:</span>
+                        <span class="summary-value" id="summaryEmail"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Phone:</span>
+                        <span class="summary-value" id="summaryPhone"></span>
+                    </div>
+                </div>
+
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i>
+                    Thank you for your donation! We will contact you soon to arrange pickup or drop-off.
+                </div>
+
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="errorText">An error occurred. Please try again.</span>
+                </div>
+
+                <button type="button" class="btn btn-secondary prev-btn">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button type="submit" class="btn">
+                    <i class="fas fa-paper-plane"></i> Submit Donation
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script src="supabase-config.js"></script>
+    <script src="fin.js"></script>
+    <script>
+        let currentStep = 1;
+        const steps = document.querySelectorAll('.form-step');
+        const stepIndicators = document.querySelectorAll('.step');
+
+        // Navigation functions
+        function showStep(stepNumber) {
+            steps.forEach(step => step.classList.remove('active'));
+            stepIndicators.forEach(step => step.classList.remove('active', 'completed'));
+            
+            document.querySelector(`[data-step="${stepNumber}"]`).classList.add('active');
+            
+            for (let i = 1; i <= stepNumber; i++) {
+                if (i < stepNumber) {
+                    stepIndicators[i-1].classList.add('completed');
+                } else {
+                    stepIndicators[i-1].classList.add('active');
+                }
+            }
+        }
+
+        function nextStep() {
+            if (validateCurrentStep()) {
+                currentStep++;
+                showStep(currentStep);
+                updateSummary();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+
+        function validateCurrentStep() {
+            const currentStepElement = document.querySelector(`[data-step="${currentStep}"]`);
+            const inputs = currentStepElement.querySelectorAll('input, select, textarea');
+            
+            for (let input of inputs) {
+                if (input.hasAttribute('required') && !input.value.trim()) {
+                    input.focus();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function updateSummary() {
+            document.getElementById('summaryQuantity').textContent = document.getElementById('bookQuantity').value;
+            document.getElementById('summaryType').textContent = document.getElementById('bookType').value;
+            document.getElementById('summaryDescription').textContent = document.getElementById('bookDescription').value;
+            document.getElementById('summaryName').textContent = document.getElementById('name').value;
+            document.getElementById('summaryEmail').textContent = document.getElementById('email').value;
+            document.getElementById('summaryPhone').textContent = document.getElementById('phone').value;
+        }
+
+        // Event listeners
+        document.querySelectorAll('.next-btn').forEach(btn => {
+            btn.addEventListener('click', nextStep);
+        });
+
+        document.querySelectorAll('.prev-btn').forEach(btn => {
+            btn.addEventListener('click', prevStep);
+        });
+
+        // Form submission
+        document.getElementById('donationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            submitBtn.disabled = true;
+
+            try {
+                const donationData = {
+                    bookType: document.getElementById('bookType').value,
+                    quantity: parseInt(document.getElementById('bookQuantity').value),
+                    description: document.getElementById('bookDescription').value,
+                    fullName: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value
+                };
+
+                const result = await saveEducationDonation(donationData);
+                
+                if (result.success) {
+                    document.getElementById('successMessage').style.display = 'block';
+                    document.getElementById('errorMessage').style.display = 'none';
+                    e.target.reset();
+                    currentStep = 1;
+                    showStep(1);
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                document.getElementById('errorText').textContent = error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('successMessage').style.display = 'none';
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Auto-save form data to localStorage
+        const formInputs = document.querySelectorAll('input, select, textarea');
+        formInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                localStorage.setItem('educationDonation_' + this.name, this.value);
+            });
+            
+            // Restore saved data
+            const savedValue = localStorage.getItem('educationDonation_' + input.name);
+            if (savedValue) {
+                input.value = savedValue;
+            }
+        });
+
+        // Clear localStorage on successful submission
+        document.getElementById('donationForm').addEventListener('submit', function() {
+            formInputs.forEach(input => {
+                localStorage.removeItem('educationDonation_' + input.name);
+            });
+        });
+    </script>
+</body>
+</html>

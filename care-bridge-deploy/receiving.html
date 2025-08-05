@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Begin Receiving - Care Bridge</title>
+    <!-- Supabase CDN -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section h3 i {
+            color: #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+            text-align: center;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+            text-align: center;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .info-card h2 {
+            color: white;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card p {
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .needs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .need-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .need-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .need-item.selected {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: #fff;
+            transform: translateY(-5px);
+        }
+
+        .need-item i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .need-item h4 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .need-item p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .monetary-section {
+            text-align: center;
+            margin: 30px 0;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .monetary-section h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .monetary-section p {
+            color: white;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .monetary-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .monetary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            background: rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .form-card {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+
+            .needs-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+        <h1><i class="fas fa-hands-helping"></i> Begin Receiving</h1>
+        <p>Let us know how we can help you and your family</p>
+    </header>
+
+    <div class="container">
+        <div class="info-card">
+            <h2><i class="fas fa-info-circle"></i> How It Works</h2>
+            <p>We connect people in need with generous donors in your community. Select your primary need and fill out the form below to be added to our database.</p>
+            <p>Your information is kept confidential and secure. We'll contact you when donations become available in your area.</p>
+            
+            <div class="needs-grid">
+                <div class="need-item" data-need="food">
+                    <i class="fas fa-utensils"></i>
+                    <h4>Food & Groceries</h4>
+                    <p>Fresh food, groceries, and essential supplies</p>
+                </div>
+                <div class="need-item" data-need="clothing">
+                    <i class="fas fa-tshirt"></i>
+                    <h4>Clothing</h4>
+                    <p>Clothes, shoes, and accessories for all ages</p>
+                </div>
+                <div class="need-item" data-need="education">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h4>Education</h4>
+                    <p>Books, school supplies, and educational materials</p>
+                </div>
+                <div class="need-item" data-need="other">
+                    <i class="fas fa-home"></i>
+                    <h4>Other Needs</h4>
+                    <p>Furniture, medical supplies, and other essentials</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="monetary-section">
+            <h3><i class="fas fa-money-bill-wave"></i> Monetary Donation</h3>
+            <p>If you need financial assistance or prefer monetary support, we can help connect you with donors who provide financial aid.</p>
+            <a href="moneydonation.html" class="monetary-btn">
+                <i class="fas fa-hand-holding-heart"></i>
+                Request Financial Support
+            </a>
+        </div>
+
+        <div class="form-card">
+            <form id="receiverForm">
+                <div class="form-section">
+                    <h3><i class="fas fa-user"></i> Personal Information</h3>
+                    
+                    <div class="form-group">
+                        <label for="fullName">Full Name *</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-map-marker-alt"></i> Location</h3>
+                    
+                    <div class="form-group">
+                        <label for="address">Full Address *</label>
+                        <textarea id="address" name="address" placeholder="Please provide your complete address..." required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-users"></i> Family Information</h3>
+                    
+                    <div class="form-group">
+                        <label for="familySize">Family Size *</label>
+                        <select id="familySize" name="familySize" required>
+                            <option value="">Select family size</option>
+                            <option value="1">1 person</option>
+                            <option value="2">2 people</option>
+                            <option value="3">3 people</option>
+                            <option value="4">4 people</option>
+                            <option value="5">5 people</option>
+                            <option value="6+">6+ people</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-heart"></i> What Do You Need?</h3>
+                    
+                    <div class="form-group">
+                        <label for="needs">Primary Needs *</label>
+                        <select id="needs" name="needs" required>
+                            <option value="">Select your primary need</option>
+                            <option value="food">Food & Groceries</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="education">Educational Materials</option>
+                            <option value="furniture">Furniture</option>
+                            <option value="medical">Medical Supplies</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Additional Details</label>
+                        <textarea id="description" name="description" placeholder="Please provide more details about your situation and specific needs..."></textarea>
+                    </div>
+                </div>
+
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Thank you for registering!</h3>
+                    <p>We've received your information and will contact you when donations become available in your area.</p>
+                </div>
+
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h3>Error</h3>
+                    <p id="errorText"></p>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> Submit Request
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2024 Care Bridge. All rights reserved.</p>
+    </footer>
+
+    <script src="supabase-config.js"></script>
+    <script src="fin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('receiverForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const needItems = document.querySelectorAll('.need-item');
+            const needsSelect = document.getElementById('needs');
+
+            // Handle need item selection
+            needItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    // Remove selected class from all items
+                    needItems.forEach(i => i.classList.remove('selected'));
+                    
+                    // Add selected class to clicked item
+                    item.classList.add('selected');
+                    
+                    // Update the select dropdown
+                    const needType = item.getAttribute('data-need');
+                    needsSelect.value = needType;
+                });
+            });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                submitBtn.disabled = true;
+                
+                try {
+                    // Collect form data
+                    const receiverData = {
+                        fullName: document.getElementById('fullName').value,
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value,
+                        address: document.getElementById('address').value,
+                        familySize: document.getElementById('familySize').value,
+                        needs: document.getElementById('needs').value,
+                        description: document.getElementById('description').value
+                    };
+
+                    // Save to Supabase
+                    const result = await saveReceiverData(receiverData);
+                    
+                    if (result.success) {
+                        // Show success message
+                        successMessage.style.display = 'block';
+                        errorMessage.style.display = 'none';
+                        
+                        // Reset form after 3 seconds
+                        setTimeout(() => {
+                            form.reset();
+                            successMessage.style.display = 'none';
+                            needItems.forEach(item => item.classList.remove('selected'));
+                        }, 3000);
+                    } else {
+                        throw new Error(result.error);
+                    }
+                } catch (error) {
+                    // Show error message
+                    document.getElementById('errorText').textContent = error.message || 'An error occurred. Please try again.';
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+                } finally {
+                    // Reset button
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Request';
+                    submitBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

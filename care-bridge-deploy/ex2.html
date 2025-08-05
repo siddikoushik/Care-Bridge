@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Care Bridge</title>
+    <link rel="stylesheet" href="fin.css">
+</head>
+<body>
+    <div id="care">
+        <span>Welcome to Care Bridge</span>
+    </div>
+
+    <div class="auth-buttons">
+        <!-- Initially, these buttons will show up if the user is not logged in -->
+    </div>
+
+    <button id="donateButton" disabled>Donate</button>
+
+    <script>
+        window.onload = function() {
+            // Check the login status in localStorage
+            let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+            if (isLoggedIn) {
+                // Enable the donate button
+                document.getElementById('donateButton').disabled = false;
+                document.querySelector('.auth-buttons').innerHTML = `
+                    <span style="color: white; padding: 0.5rem 1rem;">Welcome, ${localStorage.getItem('userEmail')} to Care Bridge</span>
+                    <button class="auth-btn" onclick="logout()">Logout</button>
+                `;
+            } else {
+                // Show login and register buttons
+                document.querySelector('.auth-buttons').innerHTML = `
+                    <button class="auth-btn" onclick="openAuthModal('login')">Login</button>
+                    <button class="auth-btn" onclick="openAuthModal('register')">Register</button>
+                `;
+            }
+        };
+
+        function logout() {
+            // Clear login data from localStorage
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userEmail');
+            
+            // Update UI after logout
+            document.getElementById('donateButton').disabled = true;
+            document.querySelector('.auth-buttons').innerHTML = `
+                <button class="auth-btn" onclick="openAuthModal('login')">Login</button>
+                <button class="auth-btn" onclick="openAuthModal('register')">Register</button>
+            `;
+            alert('Logged out successfully');
+        }
+
+        // Open authentication modals for login or register
+        function openAuthModal(type) {
+            document.getElementById(`${type}Modal`).style.display = 'flex';
+        }
+    </script>
+
+</body>
+</html>

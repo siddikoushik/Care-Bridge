@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate to Us</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #184e4e;
+            animation: fadeIn 1s ease-in;
+            
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h1 {
+            color: #f3f3f4;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px #474040e4;
+            animation: slideIn 0.8s ease-out;
+        }
+
+        h2 {
+            color: #e74c3c;
+            margin-top: 30px;
+            font-size: 1.8em;
+            transition: color 0.3s ease;
+        }
+
+        h2:hover {
+            color: #c0392b;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        p {
+            color: lab(96.02% 0.85 -0.26);
+            font-size: 1.1em;
+        }
+
+        .donation-options, .additional-options {
+            margin: 20px 0;
+        }
+
+        .donation-option {
+            margin: 15px 0;
+        }
+
+        button {
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 200px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        #qrScanner { background-color: #1e9fe9; }
+        #qrScanner:hover { background-color: #c2185b; }
+
+        #directNumber { background-color: #aa27c4; }
+        #directNumber:hover { background-color: #e68900; }
+
+        .donation-option button {
+            animation: bounceIn 0.5s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            60% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        .back-link {
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+            color: #27ae60;
+            font-weight: bold;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #219653;
+            transform: scale(1.1);
+        }
+
+        .qr-code, .phone-number {
+            margin: 10px 0;
+            padding: 15px;
+            background-color: #6f3d6f;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            display: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.3s ease;
+        }
+
+        .qr-code.show, .phone-number.show {
+            display: block;
+            opacity: 1;
+            animation: popUp 0.5s ease-out;
+        }
+
+        @keyframes popUp {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Support Our Care-Bridge</h1>
+    <p>Your donation helps us provide nutritional food, clothing donation, and education resources to those in need. Choose a payment method below:</p>
+
+    
+    <div class="additional-options">
+        <!-- QR Code Scanner Payment -->
+        <div class="donation-option">
+            <button id="qrScanner" onclick="toggleSection('qrCodeSection')">Donate via QR Code</button>
+            <div id="qrCodeSection" class="qr-code">
+                <p>Scan this QR code with your payment app:</p>
+                <img src="Qrcode.jpg" alt="QR Code Placeholder">
+                <p>(Placeholder QR Code - Use your app to scan)</p>
+            </div>
+        </div>
+
+        <!-- Direct Phone Number -->
+
+        <!-- <div class="donation-option">
+            <button id="directNumber" onclick="toggleSection('phoneNumberSection')">Donate via Phone Number</button>
+            <div id="phoneNumberSection" class="phone-number">
+                <p>Send your donation to this number via your payment app:</p>
+                <p><strong>+91 90634 08229</strong></p>
+                <p>(Placeholder number - Replace with your UPI or payment number)</p>
+            </div>
+        </div>
+    </div> -->
+
+
+    <!-- Direct Phone Number -->
+<div class="donation-option">
+    <button id="directNumber" onclick="toggleSection('phoneNumberSection')">Donate via Phone Number</button>
+    <div id="phoneNumberSection" class="phone-number">
+        <p>Send your donation to this number via your payment app:</p>
+        <p><strong>+91 90634 08229</strong></p>
+        <p>(Placeholder number - Replace with your UPI or payment number)</p>
+    </div>
+
+    <!-- Donation Details Form -->
+    <form id="donationForm" style="display: none; margin-top: 15px; background-color: #4e2d4e; padding: 20px; border-radius: 10px; color: white;" action="">
+        <h3 style="margin-bottom: 10px;">Confirm Your Donation</h3>
+        <label for="name">Full Name:</label><br>
+        <input type="text" id="name" name="name" required style="width: 90%; padding: 8px; margin: 8px 0;"><br>
+
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required style="width: 90%; padding: 8px; margin: 8px 0;"><br>
+
+        <label for="amount">Amount Donated (₹):</label><br>
+        <input type="number" id="amount" name="amount" required min="1" style="width: 90%; padding: 8px; margin: 8px 0;"><br>
+
+        <label for="message">Message (optional):</label><br>
+        <textarea id="message" name="message" rows="3" style="width: 90%; padding: 8px; margin: 8px 0;"></textarea><br>
+
+        <button type="submit" style="background-color: #27ae60; margin-top: 10px;">Submit Donation</button>
+    </form>
+</div>
+
+    
+
+    <a href="index.html" class="back-link">Back to Home</a>
+
+    <script>
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section.style.display === 'block') {
+                section.style.display = 'none';
+                section.classList.remove('show');
+            } else {
+                document.querySelectorAll('.qr-code, .phone-number').forEach(el => {
+                    el.style.display = 'none';
+                    el.classList.remove('show');
+                });
+                section.style.display = 'block';
+                section.classList.add('show');
+            }
+        }
+
+
+
+
+
+
+        function toggleSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    const form = document.getElementById('donationForm');
+
+    // Hide all sections and the form first
+    document.querySelectorAll('.qr-code, .phone-number').forEach(el => {
+        el.style.display = 'none';
+        el.classList.remove('show');
+    });
+    form.style.display = 'none';
+
+    // Show selected section
+    if (section.style.display === 'block') {
+        section.style.display = 'none';
+        section.classList.remove('show');
+    } else {
+        section.style.display = 'block';
+        section.classList.add('show');
+
+        // If phone number section, also show the form
+        if (sectionId === 'phoneNumberSection') {
+            form.style.display = 'block';
+        }
+    }
+}
+
+
+    </script>
+
+
+
+
+</body>
+</html>

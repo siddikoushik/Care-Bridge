@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cloths Donation Form</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Donate Your Cloths</h2>
+    <form action="cloths.php" method="POST">
+        <label for="cloths_quantity">Cloths Quantity</label>
+        <input type="text" name="cloths_quantity" id="cloths_quantity" required>
+
+        <label for="cloths_type">Cloths Type</label>
+        <select name="cloths_type" id="cloths_type" required>
+            <option value="">-- Select Type --</option>
+            <option value="Men">Men</option>
+            <option value="Women">Women</option>
+            <option value="Children">Children</option>
+            <option value="Mixed">Mixed</option>
+        </select>
+
+        <label for="cloths_items">Cloths Items</label>
+        <textarea name="cloths_items" id="cloths_items" rows="4" required></textarea>
+
+        <label for="name">Full Name</label>
+        <input type="text" name="name" id="name" required>
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required>
+
+        <label for="phone">Phone Number</label>
+        <input type="tel" name="phone" id="phone" required>
+
+        <button type="submit">Submit Donation</button>
+    </form>
+</div>
+
+</body>
+</html>

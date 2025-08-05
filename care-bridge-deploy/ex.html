@@ -1,0 +1,302 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Bounty - Donate Your Food</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0.`0`.1);
+        }
+
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin: 0 5px;
+            cursor: default;
+        }
+
+        .step.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-family: Arial, sans-serif;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .checkbox-group {
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group label {
+            display: inline-block;
+            margin-right: 15px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .prev-btn {
+            background-color: #bbb;
+        }
+
+        .prev-btn:hover {
+            background-color: #999;
+        }
+
+        #summary p {
+            margin: 10px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            resize: vertical;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Donate Food</h1>
+      
+    </header>
+
+    <div class="container">
+        <div class="stepper">
+            <div class="step active" data-step="1">1. Food Details</div>
+            <div class="step" data-step="2">2. Contact Info</div>
+            <div class="step" data-step="3">3. Confirm</div>
+        </div>
+
+        <form id="donationForm" class="form-container">
+            <!-- Step 1: Food Details -->
+            <div class="form-step active" data-step="1">
+                <h2>Food Details</h2>
+                <label for="foodQuantity">Food Quantity:</label>
+                <input type="text" id="foodQuantity" name="foodQuantity" required>
+                <label>Food Type:</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="foodType[]" value="Vegetarian"> Vegetarian</label>
+                    <label><input type="checkbox" name="foodType[]" value="Non-Vegetarian"> Non-Vegetarian</label>
+                    <label><input type="checkbox" name="foodType[]" value="Vegan"> Vegan</label>
+                </div>
+                <label for="items">Items to Donate:</label>
+                <textarea id="items" name="items" placeholder="e.g., Canned Soup - 10 cans, Rice - 5 lbs" required></textarea>
+                <button type="button" class="next-btn">Next</button>
+            </div>
+
+            <!-- Step 2: Contact Info -->
+            <div class="form-step" data-step="2">
+                <h2>Contact Info</h2>
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" required>
+                <button type="button" class="prev-btn">Previous</button>
+                <button type="button" class="next-btn">Next</button>
+            </div>
+
+            <!-- Step 3: Confirm -->
+            <div class="form-step" data-step="3">
+                <h2>Confirm</h2>
+                <p>Please review your details:</p>
+                <div id="summary">
+                    <p><strong>Food Quantity:</strong> <span id="summaryQuantity"></span></p>
+                    <p><strong>Food Type:</strong> <span id="summaryType"></span></p>
+                    <p><strong>Items:</strong> <span id="summaryItems"></span></p>
+                    <p><strong>Name:</strong> <span id="summaryName"></span></p>
+                    <p><strong>Email:</strong> <span id="summaryEmail"></span></p>
+                    <p><strong>Phone:</strong> <span id="summaryPhone"></span></p>
+                </div>
+                <button type="button" class="prev-btn">Previous</button>
+                <button type="submit">Submit Donation</button>
+                <br><br>
+            </div>
+        </form>
+    </div>
+
+    <footer>
+        <p>© 2025 Food Bounty. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('donationForm');
+            const steps = document.querySelectorAll('.form-step');
+            const stepIndicators = document.querySelectorAll('.step');
+            const nextButtons = document.querySelectorAll('.next-btn');
+            const prevButtons = document.querySelectorAll('.prev-btn');
+            let currentStep = 1;
+
+            // Handle Next Button Clicks
+            nextButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (validateStep(currentStep)) {
+                        currentStep++;
+                        updateForm();
+                    }
+                });
+            });
+
+            // Handle Previous Button Clicks
+            prevButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    currentStep--;
+                    updateForm();
+                });
+            });
+
+            // Handle Form Submission
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Thank you for your donation! We will contact you soon.');
+                form.reset();
+                currentStep = 1;
+                updateForm();
+            });
+
+            // Update Form Display
+            function updateForm() {
+                steps.forEach(step => {
+                    step.classList.remove('active');
+                    if (parseInt(step.getAttribute('data-step')) === currentStep) {
+                        step.classList.add('active');
+                    }
+                });
+
+                stepIndicators.forEach(indicator => {
+                    indicator.classList.remove('active');
+                    if (parseInt(indicator.getAttribute('data-step')) === currentStep) {
+                        indicator.classList.add('active');
+                    }
+                });
+
+                if (currentStep === 3) {
+                    updateSummary();
+                }
+            }
+
+            // Validate Current Step
+            function validateStep(step) {
+                const currentStepElement = steps[step - 1];
+                const inputs = currentStepElement.querySelectorAll('input:not([type="checkbox"]), textarea');
+                const checkboxes = currentStepElement.querySelectorAll('input[type="checkbox"]');
+
+                // Validate text inputs and textarea
+                for (let input of inputs) {
+                    if (!input.value.trim()) {
+                        alert(`Please fill out ${input.name} before proceeding.`);
+                        return false;
+                    }
+                }
+
+                // Validate checkboxes (at least one must be checked)
+                if (step === 1) {
+                    const checked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                    if (!checked) {
+                        alert('Please select at least one food type.');
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            // Update Confirmation Summary
+            function updateSummary() {
+                document.getElementById('summaryQuantity').textContent = document.getElementById('foodQuantity').value;
+                const foodTypes = Array.from(document.querySelectorAll('input[name="foodType[]"]:checked'))
+                    .map(checkbox => checkbox.value)
+                    .join(', ') || 'None';
+                document.getElementById('summaryType').textContent = foodTypes;
+                document.getElementById('summaryItems').textContent = document.getElementById('items').value;
+                document.getElementById('summaryName').textContent = document.getElementById('name').value;
+                document.getElementById('summaryEmail').textContent = document.getElementById('email').value;
+                document.getElementById('summaryPhone').textContent = document.getElementById('phone').value;
+            }
+        });
+    </script>
+</body>
+</html>
